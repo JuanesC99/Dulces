@@ -900,7 +900,8 @@ const BitesBoxStore = () => {
             <div className="bg-gradient-to-r from-pink-100 to-purple-100 rounded-2xl p-8 text-center">
               <div className="text-6xl mb-4">{testimonios[testimonioActual].avatar}</div>
               <p className="text-lg text-gray-700 mb-4 italic">
-                "{testimonios[testimonioActual].comentario}"
+              {testimonios[testimonioActual].comentario}
+
               </p>
               <div className="flex justify-center mb-2">
                 {[...Array(testimonios[testimonioActual].rating)].map((_, i) => (
