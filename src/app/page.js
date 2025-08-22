@@ -901,7 +901,6 @@ const BitesBoxStore = () => {
               <div className="text-6xl mb-4">{testimonios[testimonioActual].avatar}</div>
               <p className="text-lg text-gray-700 mb-4 italic">
               {testimonios[testimonioActual].comentario}
-        
               </p>
               <div className="flex justify-center mb-2">
                 {[...Array(testimonios[testimonioActual].rating)].map((_, i) => (
