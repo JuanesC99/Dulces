@@ -1,17 +1,18 @@
 "use client"
+
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, Minus, Star, Menu, X, Heart, Gift, Zap, Search, Filter, Truck, Shield, Award, Users, MapPin, Clock, Phone, Mail, Instagram, Facebook, Twitter } from 'lucide-react';
 
-// Datos de productos dulces expandidos con emojis
+// Datos de productos dulces actualizados con 4 cards
 const productos = [
   {
     id: 1,
-    nombre: "Gominolas Arcoíris",
+    nombre: "Bitesbox",
     precio: 2800,
-    imagen: "🍬",
-    categoria: "gominolas",
+    imagen: "../../Bitesbox.jpg", // Reemplaza con URL real de la primera imagen
+    categoria: "Caja triangulo",
     rating: 4.8,
-    descripcion: "Deliciosas gominolas con sabores frutales 🌈✨",
+    descripcion: "Una cajita en forma de pirámide que contiene: 45 gomitas variadas Hoja de stickers divertidos Tarjeta de regalo personalizada Un mensaje especial 💖 Perfecta para sorprender, regalar y compartir momentos dulces.",
     stock: 50,
     descuento: 0,
     nuevo: false,
@@ -19,12 +20,12 @@ const productos = [
   },
   {
     id: 2,
-    nombre: "Chocolate Premium",
+    nombre: "BitesboxMix",
     precio: 4500,
-    imagen: "🍫",
-    categoria: "chocolates",
+    imagen: "../../BitesboxMix.jpg", // Reemplaza con URL real de la segunda imagen
+    categoria: "Caja triangulo",
     rating: 4.9,
-    descripcion: "Chocolate belga de la más alta calidad 🍫💖",
+    descripcion: "La combinación ideal para regalar y disfrutar en cualquier momento. Dentro de cada caja encontrarás: ✔️ Mitad gomitas surtidas llenas de sabor ✔️ Mitad chocolates irresistibles ✔️ Hoja de stickers divertidos 🎉 ✔️ Tarjeta de regalo personalizada 💌 ✔️ Un mensajito especial para sorprender Un detalle único, dulce y creativo que convierte cualquier ocasión en un momento especial. 🎁🍫🍬",
     stock: 30,
     descuento: 15,
     nuevo: false,
@@ -32,12 +33,12 @@ const productos = [
   },
   {
     id: 3,
-    nombre: "Piruletas Gigantes",
+    nombre: "BitesCup",
     precio: 3200,
-    imagen: "🍭",
-    categoria: "piruletas",
+    imagen: "../../BitesCup.png", // Reemplaza con URL real de la tercera imagen
+    categoria: "Vasitos",
     rating: 4.6,
-    descripcion: "Piruletas coloridas de sabores únicos 🍭🌟",
+    descripcion: "Endulza tu día con nuestras irresistibles gomitas surtidas, cargadas de sabores, colores y texturas que alegrarán cualquier momento. 🌈✨ Ideal para regalar o simplemente para darte un capricho y consentirte como mereces. 💖🍬 ",
     stock: 40,
     descuento: 0,
     nuevo: true,
@@ -45,119 +46,15 @@ const productos = [
   },
   {
     id: 4,
-    nombre: "Caramelos de Miel",
+    nombre: "BitesCupMix",
     precio: 2200,
-    imagen: "🍯",
-    categoria: "caramelos",
+    imagen: "../../BitesCupMix.png", // Reemplaza con URL real de la cuarta imagen
+    categoria: "Vasitos",
     rating: 4.5,
-    descripcion: "Caramelos suaves con miel natural 🍯😋",
+    descripcion: "Disfruta de una irresistible mezcla de gomitas surtidas y deliciosos chocolates en un solo vasito. 😍✨ Perfecto para compartir, regalar o simplemente darte un gusto en cualquier momento. Un detalle dulce que combina diversión y sabor en cada bocado. 🎁🍭🍫",
     stock: 60,
     descuento: 10,
     nuevo: false,
-    destacado: false
-  },
-  {
-    id: 5,
-    nombre: "Algodón de Azúcar",
-    precio: 1800,
-    imagen: "🍥",
-    categoria: "algodones",
-    rating: 4.4,
-    descripcion: "Esponjoso algodón de azúcar rosa 🍥☁️",
-    stock: 25,
-    descuento: 0,
-    nuevo: false,
-    destacado: false
-  },
-  {
-    id: 6,
-    nombre: "Ositos de Goma",
-    precio: 3000,
-    imagen: "🧸",
-    categoria: "gominolas",
-    rating: 4.7,
-    descripcion: "Clásicos ositos de goma multicolores 🧸🎉",
-    stock: 45,
-    descuento: 0,
-    nuevo: false,
-    destacado: true
-  },
-  {
-    id: 7,
-    nombre: "Trufas de Chocolate",
-    precio: 5200,
-    imagen: "🍫",
-    categoria: "chocolates",
-    rating: 4.9,
-    descripcion: "Exquisitas trufas rellenas de crema 🍫🪄",
-    stock: 20,
-    descuento: 20,
-    nuevo: true,
-    destacado: true
-  },
-  {
-    id: 8,
-    nombre: "Malvaviscos",
-    precio: 2400,
-    imagen: "🤍",
-    categoria: "malvaviscos",
-    rating: 4.3,
-    descripcion: "Suaves malvaviscos para tostar 🤍🔥",
-    stock: 35,
-    descuento: 0,
-    nuevo: false,
-    destacado: false
-  },
-  {
-    id: 9,
-    nombre: "Chupetes Ácidos",
-    precio: 2900,
-    imagen: "🍋",
-    categoria: "piruletas",
-    rating: 4.5,
-    descripcion: "Intensos chupetes con sabor ácido 🍋⚡",
-    stock: 40,
-    descuento: 0,
-    nuevo: true,
-    destacado: false
-  },
-  {
-    id: 10,
-    nombre: "Bombones Especiales",
-    precio: 6200,
-    imagen: "💎",
-    categoria: "chocolates",
-    rating: 4.8,
-    descripcion: "Bombones gourmet con licor 💎🍷",
-    stock: 15,
-    descuento: 25,
-    nuevo: false,
-    destacado: true
-  },
-  {
-    id: 11,
-    nombre: "Regaliz Rojo",
-    precio: 2600,
-    imagen: "🔴",
-    categoria: "caramelos",
-    rating: 4.4,
-    descripcion: "Clásico regaliz rojo dulce 🔴❤️",
-    stock: 55,
-    descuento: 0,
-    nuevo: false,
-    destacado: false
-  },
-  {
-    id: 12,
-    nombre: "Nubes de Azúcar",
-    precio: 1900,
-    imagen: "☁️",
-    categoria: "algodones",
-    rating: 4.2,
-    descripcion: "Suaves nubes de azúcar multicolor ☁️🌈",
-    stock: 30,
-    descuento: 5,
-    nuevo: true,
     destacado: false
   }
 ];
@@ -725,7 +622,7 @@ const BitesBoxStore = () => {
                   </button>
                 
                   <div className="text-6xl text-center mb-4 hover:animate-spin-slow transition-transform duration-500">
-                    {producto.imagen}
+                    <img src={producto.imagen} alt={producto.nombre} className="w-full h-48 object-cover rounded-lg" />
                   </div>
                   
                   <h3 className="text-xl font-bold mb-2 text-purple-800 hover:animate-glow">
@@ -853,7 +750,7 @@ const BitesBoxStore = () => {
                         return (
                           <div key={item.id} className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-4 border border-pink-200 shadow-sm hover:animate-glow">
                             <div className="flex items-start space-x-4">
-                              <div className="text-3xl animate-bounce">{item.imagen}</div>
+                              <div className="text-3xl animate-bounce"><img src={item.imagen} alt={item.nombre} className="w-12 h-12 object-cover rounded-full" /></div>
                               <div className="flex-1 min-w-0">
                                 <h4 className="font-bold text-purple-800 truncate">{item.nombre}</h4>
                                 <div className="text-sm text-gray-600 mb-2">
@@ -1016,7 +913,7 @@ const BitesBoxStore = () => {
                       </button>
                     
                       <div className="text-6xl text-center mb-4 hover:animate-spin-slow transition-transform duration-500">
-                        {producto.imagen}
+                        <img src={producto.imagen} alt={producto.nombre} className="w-full h-48 object-cover rounded-lg" />
                       </div>
                       
                       <h3 className="text-xl font-bold mb-2 text-purple-800 hover:animate-glow">
