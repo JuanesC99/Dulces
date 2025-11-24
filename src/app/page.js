@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import CheckoutModal from './Components/CheckoutModal';
 import { ShoppingCart, Plus, Minus, Star, Menu, X, Heart, Gift, Zap, Search, Filter, Truck, Shield, Award, Users, MapPin, Clock, Phone, Mail, Instagram, Facebook, Twitter } from 'lucide-react';
 
 // Datos de productos dulces actualizados con 4 cards
@@ -10,7 +11,7 @@ const productos = [
     nombre: "Bitesbox",
     precio: 2800,
     imagen: "../../Bitesbox.jpg", // Reemplaza con URL real de la primera imagen
-    categoria: "Caja triangulo",
+    categoria: "Cajas",
     rating: 4.8,
     descripcion: "Una cajita en forma de pirámide que contiene: 45 gomitas variadas Hoja de stickers divertidos Tarjeta de regalo personalizada Un mensaje especial 💖 Perfecta para sorprender, regalar y compartir momentos dulces.",
     stock: 50,
@@ -23,7 +24,7 @@ const productos = [
     nombre: "BitesboxMix",
     precio: 4500,
     imagen: "../../BitesboxMix.jpg", // Reemplaza con URL real de la segunda imagen
-    categoria: "Caja triangulo",
+    categoria: "Cajas",
     rating: 4.9,
     descripcion: "La combinación ideal para regalar y disfrutar en cualquier momento. Dentro de cada caja encontrarás: ✔️ Mitad gomitas surtidas llenas de sabor ✔️ Mitad chocolates irresistibles ✔️ Hoja de stickers divertidos 🎉 ✔️ Tarjeta de regalo personalizada 💌 ✔️ Un mensajito especial para sorprender Un detalle único, dulce y creativo que convierte cualquier ocasión en un momento especial. 🎁🍫🍬",
     stock: 30,
@@ -36,7 +37,7 @@ const productos = [
     nombre: "BitesCup",
     precio: 3200,
     imagen: "../../BitesCup.png", // Reemplaza con URL real de la tercera imagen
-    categoria: "Vasitos",
+    categoria: "Vasito",
     rating: 4.6,
     descripcion: "Endulza tu día con nuestras irresistibles gomitas surtidas, cargadas de sabores, colores y texturas que alegrarán cualquier momento. 🌈✨ Ideal para regalar o simplemente para darte un capricho y consentirte como mereces. 💖🍬 ",
     stock: 40,
@@ -49,7 +50,7 @@ const productos = [
     nombre: "BitesCupMix",
     precio: 2200,
     imagen: "../../BitesCupMix.png", // Reemplaza con URL real de la cuarta imagen
-    categoria: "Vasitos",
+    categoria: "Vasito",
     rating: 4.5,
     descripcion: "Disfruta de una irresistible mezcla de gomitas surtidas y deliciosos chocolates en un solo vasito. 😍✨ Perfecto para compartir, regalar o simplemente darte un gusto en cualquier momento. Un detalle dulce que combina diversión y sabor en cada bocado. 🎁🍭🍫",
     stock: 60,
@@ -61,25 +62,13 @@ const productos = [
 
 const testimonios = [
   {
-    id: 1,
-    nombre: "María González",
-    comentario: "Los mejores dulces que he probado. La calidad es excepcional y llegaron súper rápido.",
-    rating: 5,
-    avatar: "👩‍💼"
+   
   },
   {
-    id: 2,
-    nombre: "Carlos Rodríguez",
-    comentario: "Mi tienda favorita para comprar dulces. Siempre tienen productos frescos y deliciosos.",
-    rating: 5,
-    avatar: "👨‍🔧"
+    
   },
   {
-    id: 3,
-    nombre: "Ana Martín",
-    comentario: "Excelente servicio al cliente. Los chocolates premium son increíbles.",
-    rating: 5,
-    avatar: "👩‍🎨"
+    
   }
 ];
 
@@ -101,6 +90,8 @@ const BitesBoxStore = () => {
   const [datosContacto, setDatosContacto] = useState({ nombre: '', email: '', mensaje: '' });
   const [notificacionFavorito, setNotificacionFavorito] = useState(null);
   const [confettiActive, setConfettiActive] = useState(false);
+  const [mostrarCheckout, setMostrarCheckout] = useState(false);
+  
 
   // Animación de entrada de la página
   useEffect(() => {
@@ -130,6 +121,18 @@ const BitesBoxStore = () => {
   useEffect(() => {
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
   }, [favoritos]);
+
+  useEffect(() => {
+    const carritoGuardado = localStorage.getItem('carrito');
+    if (carritoGuardado) {
+      setCarrito(JSON.parse(carritoGuardado));
+    }
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }, [carrito]);
+  
 
   // Función para agregar al carrito con efectos y confetti
   const agregarAlCarrito = (producto) => {
@@ -208,6 +211,20 @@ const BitesBoxStore = () => {
 
   const cantidadItems = carrito.reduce((total, item) => total + item.cantidad, 0);
 
+  const [checkoutEnviado, setCheckoutEnviado] = useState(false);
+
+function enviarCheckout() {
+  // Aquí puedes procesar realmente el pedido (EmailJS, API, etc.)
+  setCheckoutEnviado(true);
+
+  // Cerrar automáticamente después de 3 segundos
+  setTimeout(() => {
+    setMostrarCheckout(false);
+    setCheckoutEnviado(false);
+  }, 3000);
+}
+
+
   // Filtrado y búsqueda mejorados
   let productosFiltrados = productos;
 
@@ -259,6 +276,12 @@ const BitesBoxStore = () => {
     alert('¡Mensaje enviado! Te contactaremos pronto. ✨');
     setDatosContacto({ nombre: '', email: '', mensaje: '' });
     setMostrarFormularioContacto(false);
+  };
+  
+  const iniciarCheckout = () => {
+    if (carrito.length === 0) return;
+    setMostrarCheckout(true);
+    setMostrarCarrito(false);
   };
 
   return (
@@ -401,9 +424,8 @@ const BitesBoxStore = () => {
             <nav className="hidden lg:flex space-x-4">
               {[
                 { key: 'todos', label: 'Todos', emoji: '🎪' },
-                { key: 'chocolates', label: 'Chocolates', emoji: '🍫' },
-                { key: 'gominolas', label: 'Gominolas', emoji: '🍬' },
-                { key: 'piruletas', label: 'Piruletas', emoji: '🍭' }
+                { key: 'Cajas', label: 'Cajitas', emoji: '📦' },
+                { key: 'Vasito', label: 'Vasitos', emoji: '🥤' },
               ].map(cat => (
                 <button
                   key={cat.key}
@@ -697,167 +719,235 @@ const BitesBoxStore = () => {
             </div>
           )}
         </main>
-
+        </div>
         {/* Panel del carrito mejorado */}
         {mostrarCarrito && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:bg-transparent">
-            <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 md:w-80 overflow-hidden animate-slide-in-right">
-              <div className="h-full flex flex-col">
-                {/* Header del carrito */}
-                <div className="bg-gradient-to-r from-pink-400 to-purple-500 text-white p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-3">
-                      <div className="text-3xl animate-spin-slow">🛒</div>
-                      <div>
-                        <h3 className="text-xl font-bold animate-glow">Mi Carrito Mágico</h3>
-                        <p className="text-pink-100 text-sm">{cantidadItems} productos encantados ✨</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setMostrarCarrito(false)}
-                      className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-300 hover:rotate-90"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                  
-                  {totalDescuentos > 0 && (
-                    <div className="bg-white bg-opacity-20 rounded-lg p-2 text-center animate-pulse">
-                      <span className="text-sm">¡Ahorras ${totalDescuentos.toLocaleString()}! 💰✨</span>
-                    </div>
-                  )}
-                </div>
+  <div className="fixed inset-0 z-50 flex justify-end">
+    {/* Overlay semi-transparente solo para el carrito */}
+    <div className="absolute inset-0 bg-white/30 backdrop-blur-md transition-opacity duration-500"></div>
 
-                {/* Contenido del carrito */}
-                <div className="flex-1 overflow-y-auto p-4">
-                  {carrito.length === 0 ? (
-                    <div className="text-center text-gray-500 mt-12 animate-fade-in">
-                      <div className="text-6xl mb-4 animate-bounce">🛒</div>
-                      <p className="text-lg font-semibold mb-2">Tu carrito está vacío 😔</p>
-                      <p className="text-sm">¡Agrega algunos dulces mágicos! ✨</p>
-                      <button
-                        onClick={() => setMostrarCarrito(false)}
-                        className="mt-4 bg-gradient-to-r from-pink-400 to-purple-500 text-white px-6 py-2 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300"
-                      >
-                        Explorar Dulces 🪄
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {carrito.map(item => {
-                        const precioConDescuento = calcularPrecioConDescuento(item.precio, item.descuento);
-                        
-                        return (
-                          <div key={item.id} className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-4 border border-pink-200 shadow-sm hover:animate-glow">
-                            <div className="flex items-start space-x-4">
-                              <div className="text-3xl animate-bounce"><img src={item.imagen} alt={item.nombre} className="w-12 h-12 object-cover rounded-full" /></div>
-                              <div className="flex-1 min-w-0">
-                                <h4 className="font-bold text-purple-800 truncate">{item.nombre}</h4>
-                                <div className="text-sm text-gray-600 mb-2">
-                                  {item.descuento > 0 ? (
-                                    <div className="flex items-center space-x-2">
-                                      <span className="line-through text-gray-400">
-                                        ${item.precio.toLocaleString()}
-                                      </span>
-                                      <span className="text-purple-600 font-semibold animate-pulse">
-                                        ${precioConDescuento.toLocaleString()}
-                                      </span>
-                                      <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full animate-bounce">
-                                        -{item.descuento}%
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <span className="text-purple-600 font-semibold">
-                                      ${item.precio.toLocaleString()}
-                                    </span>
-                                  )}
-                                </div>
-                                
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center space-x-2">
-                                    <button
-                                      onClick={() => actualizarCantidad(item.id, item.cantidad - 1)}
-                                      className="w-7 h-7 bg-pink-400 text-white rounded-full hover:bg-pink-500 flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110"
-                                    >
-                                      <Minus className="w-3 h-3" />
-                                    </button>
-                                    <span className="w-8 text-center font-bold text-purple-800 animate-pulse">
-                                      {item.cantidad}
-                                    </span>
-                                    <button
-                                      onClick={() => actualizarCantidad(item.id, item.cantidad + 1)}
-                                      className="w-7 h-7 bg-pink-400 text-white rounded-full hover:bg-pink-500 flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110"
-                                    >
-                                      <Plus className="w-3 h-3" />
-                                    </button>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="font-bold text-purple-600 animate-glow">
-                                      ${(precioConDescuento * item.cantidad).toLocaleString()}
-                                    </p>
-                                    {item.descuento > 0 && (
-                                      <p className="text-xs text-green-600 animate-pulse">
-                                        Ahorro: ${((item.precio - precioConDescuento) * item.cantidad).toLocaleString()} 💸
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+    {/* Carrito responsive */}
+    <div className="relative bg-white shadow-2xl flex flex-col transition-transform duration-500 transform
+                    w-screen h-screen md:w-80 md:h-screen animate-fade-in-up">
 
-                {/* Footer del carrito mejorado */}
-                {carrito.length > 0 && (
-                  <div className="border-t bg-gray-50 p-4">
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-sm">
-                        <span>Subtotal:</span>
-                        <span>${(totalCarrito + totalDescuentos).toLocaleString()} 💰</span>
-                      </div>
-                      {totalDescuentos > 0 && (
-                        <div className="flex justify-between text-sm text-green-600 animate-pulse">
-                          <span>Descuentos:</span>
-                          <span>-${totalDescuentos.toLocaleString()} 🎁</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-sm">
-                        <span>Envío:</span>
-                        <span className={totalCarrito >= 15000 ? 'text-green-600 animate-bounce' : ''}>
-                          {totalCarrito >= 15000 ? 'GRATIS 🚀' : '$3,500'}
-                        </span>
-                      </div>
-                      <div className="border-t pt-2 flex justify-between items-center">
-                        <span className="text-lg font-bold text-purple-800">Total:</span>
-                        <span className="text-2xl font-bold text-purple-600 animate-glow">
-                          ${(totalCarrito + (totalCarrito >= 15000 ? 0 : 3500)).toLocaleString()} ✨
-                        </span>
-                      </div>
-                      {totalCarrito < 15000 && (
-                        <p className="text-xs text-gray-600 text-center animate-pulse">
-                          Agrega ${(15000 - totalCarrito).toLocaleString()} más para envío gratis 🚚💨
-                        </p>
-                      )}
-                    </div>
-                    
-                    <button
-                      onClick={procesarPedido}
-                      className="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-lg transform hover:scale-105 hover:rotate-3 flex items-center justify-center space-x-2"
-                    >
-                      <span>Confirmar Pedido</span>
-                      <span>🚀✨</span>
-                    </button>
-                  </div>
-                )}
-              </div>
+      {/* Header sticky */}
+      <div className="bg-gradient-to-r from-pink-400 to-purple-500 text-white p-6 sticky top-0 z-30">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-3">
+            <div className="text-3xl animate-spin-slow">🛒</div>
+            <div>
+              <h3 className="text-xl font-bold animate-glow">Mi Carrito Mágico</h3>
+              <p className="text-pink-100 text-sm">{cantidadItems} productos encantados ✨</p>
             </div>
+          </div>
+          <button
+            onClick={() => setMostrarCarrito(false)}
+            className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-300 hover:rotate-90"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {totalDescuentos > 0 && (
+          <div className="bg-white bg-opacity-20 rounded-lg p-2 text-center animate-pulse">
+            <span className="text-sm">¡Ahorras ${totalDescuentos.toLocaleString()}! 💰✨</span>
           </div>
         )}
       </div>
+
+      {/* Contenido scrollable */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {carrito.length === 0 ? (
+          <div className="text-center text-gray-500 mt-12 animate-fade-in">
+            <div className="text-6xl mb-4 animate-bounce">🛒</div>
+            <p className="text-lg font-semibold mb-2">Tu carrito está vacío 😔</p>
+            <p className="text-sm">¡Agrega algunos dulces mágicos! ✨</p>
+            <button
+              onClick={() => setMostrarCarrito(false)}
+              className="mt-4 bg-gradient-to-r from-pink-400 to-purple-500 text-white px-6 py-2 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300"
+            >
+              Explorar Dulces 🪄
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {carrito.map(item => {
+              const precioConDescuento = calcularPrecioConDescuento(item.precio, item.descuento);
+              return (
+                <div key={item.id} className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-4 border border-pink-200 shadow-sm hover:animate-glow">
+                  <div className="flex items-start space-x-4">
+                    <div className="text-3xl animate-bounce">
+                      <img src={item.imagen} alt={item.nombre} className="w-12 h-12 object-cover rounded-full" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-purple-800 truncate">{item.nombre}</h4>
+                      <div className="text-sm text-gray-600 mb-2">
+                        {item.descuento > 0 ? (
+                          <div className="flex items-center space-x-2">
+                            <span className="line-through text-gray-400">${item.precio.toLocaleString()}</span>
+                            <span className="text-purple-600 font-semibold animate-pulse">${precioConDescuento.toLocaleString()}</span>
+                            <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full animate-bounce">-{item.descuento}%</span>
+                          </div>
+                        ) : (
+                          <span className="text-purple-600 font-semibold">${item.precio.toLocaleString()}</span>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => actualizarCantidad(item.id, item.cantidad - 1)}
+                            className="w-7 h-7 bg-pink-400 text-white rounded-full hover:bg-pink-500 flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110"
+                          >
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="w-8 text-center font-bold text-purple-800 animate-pulse">{item.cantidad}</span>
+                          <button
+                            onClick={() => actualizarCantidad(item.id, item.cantidad + 1)}
+                            className="w-7 h-7 bg-pink-400 text-white rounded-full hover:bg-pink-500 flex items-center justify-center text-sm font-bold transition-all duration-300 hover:scale-110"
+                          >
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-purple-600 animate-glow">
+                            ${(precioConDescuento * item.cantidad).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Footer sticky */}
+      {carrito.length > 0 && (
+        <div className="border-t bg-gray-50 p-4 sticky bottom-0">
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between text-sm">
+              <span>Subtotal:</span>
+              <span>${(totalCarrito + totalDescuentos).toLocaleString()} 💰</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Envío:</span>
+              <span className={totalCarrito >= 15000 ? 'text-green-600 animate-bounce' : ''}>
+                {totalCarrito >= 15000 ? 'GRATIS 🚀' : '$3,500'}
+              </span>
+            </div>
+            <div className="border-t pt-2 flex justify-between items-center">
+              <span className="text-lg font-bold text-purple-800">Total:</span>
+              <span className="text-2xl font-bold text-purple-600 animate-glow">
+                ${(totalCarrito + (totalCarrito >= 15000 ? 0 : 3500)).toLocaleString()} ✨
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={iniciarCheckout}
+            className="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-lg transform hover:scale-105 hover:rotate-3 flex items-center justify-center space-x-2"
+          >
+            <span>Comprar Ahora 💳✨</span>
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+
+
+      
+{mostrarCheckout && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    {/* Fondo con blur */}
+    <div 
+      className={`absolute inset-0 bg-white/30 backdrop-blur-md transition-opacity duration-500 ${checkoutEnviado ? 'opacity-0' : 'opacity-100'}`}
+    ></div>
+
+    {/* Modal */}
+    <div 
+      className={`relative bg-white/90 rounded-3xl shadow-2xl p-8 max-w-lg w-full animate-fade-in-up transform transition-transform duration-500 ${
+        checkoutEnviado ? 'translate-y-10 opacity-0' : 'translate-y-0 opacity-100'
+      }`}
+    >
+      
+      {!checkoutEnviado ? (
+        <>
+          <h2 className="text-3xl font-bold mb-6 text-purple-700 text-center animate-glow">✨ Finalizar Compra ✨</h2>
+
+          {/* Resumen rápido del carrito */}
+          <div className="space-y-2 mb-6 max-h-40 overflow-y-auto">
+            {carrito.map(item => {
+              const precioConDescuento = calcularPrecioConDescuento(item.precio, item.descuento);
+              return (
+                <div key={item.id} className="flex justify-between items-center bg-pink-50/70 rounded-xl p-2 shadow-sm animate-pop-in">
+                  <img src={item.imagen} alt={item.nombre} className="w-12 h-12 object-cover rounded-full" />
+                  <div className="flex-1 px-2">
+                    <p className="font-semibold text-purple-800 truncate">{item.nombre}</p>
+                    <p className="text-sm text-purple-700">{item.cantidad} × ${precioConDescuento.toLocaleString()}</p>
+                  </div>
+                  <p className="font-bold text-purple-600">${(precioConDescuento * item.cantidad).toLocaleString()}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Formulario */}
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); enviarCheckout(); }}>
+            <input 
+              type="text" 
+              placeholder="Nombre completo" 
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white/90 text-purple-800 animate-fade-in"
+            />
+            <input 
+              type="email" 
+              placeholder="Correo electrónico" 
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white/90 text-purple-800 animate-fade-in"
+            />
+            <input 
+              type="text" 
+              placeholder="Dirección de envío" 
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-pink-400 focus:outline-none bg-white/90 text-purple-800 animate-fade-in"
+            />
+
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-green-400 to-blue-500 text-white py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold text-lg transform hover:scale-105 hover:rotate-3 flex items-center justify-center space-x-2 active:scale-95"
+            >
+              <span>Confirmar y Pagar 💳✨</span>
+            </button>
+          </form>
+
+          <button
+            onClick={() => setMostrarCheckout(false)}
+            className="mt-4 w-full text-sm text-purple-700 hover:text-purple-900 transition text-center"
+          >
+            Cancelar
+          </button>
+        </>
+      ) : (
+        // Mensaje de éxito
+        <div className="text-center animate-fade-in-up">
+          <div className="text-6xl mb-4 animate-bounce">🎉</div>
+          <h3 className="text-2xl font-bold text-purple-700 mb-2">¡Pedido recibido! ✨</h3>
+          <p className="text-purple-800 mb-6">Tu dulce mágico llegará muy pronto a tu dirección 🚀🍬</p>
+          <button
+            onClick={() => setMostrarCheckout(false)}
+            className="bg-gradient-to-r from-pink-400 to-purple-500 text-white px-6 py-3 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
+            Cerrar
+          </button>
+        </div>
+      )}
+
+    </div>
+  </div>
+)}
+
+
 
       {/* Sección de Favoritos mejorada */}
       <section className={`py-16 bg-gradient-to-br from-pink-50 to-purple-50 transition-all duration-1000 delay-1000 ${
